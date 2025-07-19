@@ -55,17 +55,20 @@ jobs:
         
     - name: Build Blue Docker image
       run: |
-        docker build -t $REGISTRY/$IMAGE_NAME/blue:${{ github.sha }} ./blue
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA ./blue
         docker build -t $REGISTRY/$IMAGE_NAME/blue:latest ./blue
         
     - name: Build Green Docker image
       run: |
-        docker build -t $REGISTRY/$IMAGE_NAME/green:${{ github.sha }} ./green
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker build -t $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA ./green
         docker build -t $REGISTRY/$IMAGE_NAME/green:latest ./green
         
     - name: Build Proxy Docker image
       run: |
-        docker build -t $REGISTRY/$IMAGE_NAME/proxy:${{ github.sha }} ./proxy
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA ./proxy
         docker build -t $REGISTRY/$IMAGE_NAME/proxy:latest ./proxy
 
   # Security scan stage
@@ -81,7 +84,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:${{ github.sha }}'
+        image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$(echo ${{ github.sha }} | cut -c1-7)'
         format: 'sarif'
         output: 'trivy-results.sarif'
         
@@ -119,11 +122,12 @@ jobs:
         
     - name: Push Docker images
       run: |
-        docker push $REGISTRY/$IMAGE_NAME/blue:${{ github.sha }}
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker push $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA
         docker push $REGISTRY/$IMAGE_NAME/blue:latest
-        docker push $REGISTRY/$IMAGE_NAME/green:${{ github.sha }}
+        docker push $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA
         docker push $REGISTRY/$IMAGE_NAME/green:latest
-        docker push $REGISTRY/$IMAGE_NAME/proxy:${{ github.sha }}
+        docker push $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA
         docker push $REGISTRY/$IMAGE_NAME/proxy:latest
         
     - name: Deploy to EC2
@@ -136,15 +140,18 @@ jobs:
           # Update deployment files
           cd /opt/zeroshift
           
+          # Get short SHA
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          
           # Pull latest images
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:${{ github.sha }}
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:${{ github.sha }}
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:${{ github.sha }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA
           
           # Update docker-compose.yml with new image tags
-          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:${{ github.sha }}|g" docker-compose.yml
-          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:${{ github.sha }}|g" docker-compose.yml
-          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:${{ github.sha }}|g" docker-compose.yml
+          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA|g" docker-compose.yml
           
           # Deploy green environment (staging)
           docker-compose up -d green
@@ -156,7 +163,7 @@ jobs:
           # Switch traffic to green
           ./switch.sh green
           
-          echo "✅ Staging deployment completed successfully"
+          echo "Staging deployment completed successfully"
 
   # Deploy to production
   deploy-production:
@@ -186,11 +193,12 @@ jobs:
         
     - name: Push Docker images
       run: |
-        docker push $REGISTRY/$IMAGE_NAME/blue:${{ github.sha }}
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker push $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA
         docker push $REGISTRY/$IMAGE_NAME/blue:latest
-        docker push $REGISTRY/$IMAGE_NAME/green:${{ github.sha }}
+        docker push $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA
         docker push $REGISTRY/$IMAGE_NAME/green:latest
-        docker push $REGISTRY/$IMAGE_NAME/proxy:${{ github.sha }}
+        docker push $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA
         docker push $REGISTRY/$IMAGE_NAME/proxy:latest
         
     - name: Deploy to EC2
@@ -203,15 +211,18 @@ jobs:
           # Update deployment files
           cd /opt/zeroshift
           
+          # Get short SHA
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          
           # Pull latest images
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:${{ github.sha }}
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:${{ github.sha }}
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:${{ github.sha }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA
           
           # Update docker-compose.yml with new image tags
-          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:${{ github.sha }}|g" docker-compose.yml
-          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:${{ github.sha }}|g" docker-compose.yml
-          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:${{ github.sha }}|g" docker-compose.yml
+          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA|g" docker-compose.yml
           
           # Determine current live environment
           CURRENT_LIVE=$(cat live.txt)
@@ -251,19 +262,19 @@ jobs:
             docker-compose rm -f green
           fi
           
-          echo "✅ Production deployment completed successfully"
+          echo "Production deployment completed successfully"
           
     - name: Notify deployment success
       if: success()
       run: |
-        echo "🚀 Production deployment successful!"
+        echo "Production deployment successful!"
         echo "Commit: ${{ github.sha }}"
         echo "Deployed by: ${{ github.actor }}"
         
     - name: Notify deployment failure
       if: failure()
       run: |
-        echo "❌ Production deployment failed!"
+        echo "Production deployment failed!"
         echo "Commit: ${{ github.sha }}"
         echo "Deployed by: ${{ github.actor }}"
 
@@ -305,4 +316,4 @@ jobs:
             ./switch.sh green
           fi
           
-          echo "✅ Rollback completed successfully" 
+          echo "Rollback completed successfully" 
