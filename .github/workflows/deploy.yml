@@ -133,6 +133,7 @@ jobs:
         docker push $REGISTRY/$IMAGE_NAME/proxy:latest
         
     - name: Deploy to EC2
+      if: secrets.EC2_HOST != ''
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -166,6 +167,20 @@ jobs:
           ./switch.sh green
           
           echo "Staging deployment completed successfully"
+          
+    - name: Skip EC2 deployment
+      if: secrets.EC2_HOST == ''
+      run: |
+        echo "Skipping EC2 deployment - EC2_HOST secret not configured"
+        echo "Images have been successfully pushed to GitHub Container Registry:"
+        echo "- ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:${{ github.sha }}"
+        echo "- ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:${{ github.sha }}"
+        echo "- ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:${{ github.sha }}"
+        echo ""
+        echo "To enable EC2 deployment, configure these secrets in your repository:"
+        echo "- EC2_HOST: Your EC2 instance IP address"
+        echo "- EC2_USERNAME: SSH username (usually 'ubuntu' or 'ec2-user')"
+        echo "- EC2_SSH_KEY: Private SSH key for connecting to the instance"
 
   # Deploy to production
   deploy-production:
@@ -207,6 +222,7 @@ jobs:
         docker push $REGISTRY/$IMAGE_NAME/proxy:latest
         
     - name: Deploy to EC2
+      if: secrets.EC2_HOST != ''
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -295,6 +311,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Rollback on EC2
+      if: secrets.EC2_HOST != ''
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -314,4 +331,10 @@ jobs:
             ./switch.sh green
           fi
           
-          echo "Rollback completed successfully" 
+          echo "Rollback completed successfully"
+          
+    - name: Skip rollback
+      if: secrets.EC2_HOST == ''
+      run: |
+        echo "Skipping rollback - EC2_HOST secret not configured"
+        echo "To enable rollback functionality, configure EC2_HOST secret in your repository" 
