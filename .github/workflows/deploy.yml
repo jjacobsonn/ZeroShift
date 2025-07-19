@@ -101,6 +101,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build Docker images
+      run: |
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/blue:latest ./blue
+        docker build -t $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/green:latest ./green
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/proxy:latest ./proxy
+      
     - name: Login to Container Registry
       uses: docker/login-action@v3
       with:
@@ -164,6 +174,16 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build Docker images
+      run: |
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/blue:latest ./blue
+        docker build -t $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/green:latest ./green
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/proxy:latest ./proxy
       
     - name: Login to Container Registry
       uses: docker/login-action@v3
@@ -270,13 +290,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        
     - name: Rollback on EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
