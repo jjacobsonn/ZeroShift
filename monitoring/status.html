@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroShift - Service Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .service-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+            transition: transform 0.2s;
+        }
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .service-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-healthy { background-color: #27ae60; }
+        .status-unhealthy { background-color: #e74c3c; }
+        .status-unknown { background-color: #f39c12; }
+        .refresh-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px;
+        }
+        .refresh-btn:hover {
+            background: #2980b9;
+        }
+        .timestamp {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 ZeroShift Service Status</h1>
+            <p>Blue-Green Deployment Monitoring Dashboard</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="refresh-btn" onclick="checkStatus()">🔄 Refresh Status</button>
+        </div>
+        
+        <div class="status-grid" id="statusGrid">
+            <div class="service-card">
+                <div class="service-name">🌐 Nginx Proxy</div>
+                <div id="proxy-status">
+                    <span class="status-indicator status-unknown"></span>
+                    <span>Checking...</span>
+                </div>
+                <div>Port: 80</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-name">🔵 Blue Environment</div>
+                <div id="blue-status">
+                    <span class="status-indicator status-unknown"></span>
+                    <span>Checking...</span>
+                </div>
+                <div>Port: 8081</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-name">🟢 Green Environment</div>
+                <div id="green-status">
+                    <span class="status-indicator status-unknown"></span>
+                    <span>Checking...</span>
+                </div>
+                <div>Port: 8082</div>
+            </div>
+        </div>
+        
+        <div class="timestamp" id="timestamp">
+            Last updated: Never
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            const services = [
+                { name: 'proxy', url: '/', element: 'proxy-status' },
+                { name: 'blue', url: '/blue/health', element: 'blue-status' },
+                { name: 'green', url: '/green/health', element: 'green-status' }
+            ];
+
+            for (const service of services) {
+                try {
+                    const response = await fetch(service.url);
+                    const element = document.getElementById(service.element);
+                    
+                    if (response.ok) {
+                        element.innerHTML = `
+                            <span class="status-indicator status-healthy"></span>
+                            <span>Healthy (${response.status})</span>
+                        `;
+                    } else {
+                        element.innerHTML = `
+                            <span class="status-indicator status-unhealthy"></span>
+                            <span>Unhealthy (${response.status})</span>
+                        `;
+                    }
+                } catch (error) {
+                    const element = document.getElementById(service.element);
+                    element.innerHTML = `
+                        <span class="status-indicator status-unhealthy"></span>
+                        <span>Error: ${error.message}</span>
+                    `;
+                }
+            }
+            
+            document.getElementById('timestamp').textContent = 
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+
+        // Check status on page load
+        checkStatus();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html> 
