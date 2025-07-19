@@ -23,7 +23,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jjacobsonn
+  IMAGE_NAME: ${{ github.actor }}
 
 jobs:
   # Test and build stage
@@ -56,20 +56,20 @@ jobs:
     - name: Build Blue Docker image
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-blue:$SHORT_SHA ./blue
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-blue:latest ./blue
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA ./blue
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:latest ./blue
         
     - name: Build Green Docker image
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-green:$SHORT_SHA ./green
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-green:latest ./green
+        docker build -t $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA ./green
+        docker build -t $REGISTRY/$IMAGE_NAME/green:latest ./green
         
     - name: Build Proxy Docker image
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-proxy:$SHORT_SHA ./proxy
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-proxy:latest ./proxy
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA ./proxy
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:latest ./proxy
 
   # Security scan stage
   security-scan:
@@ -107,9 +107,9 @@ jobs:
     - name: Build Docker images
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-blue:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/zeroshift-blue:latest ./blue
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-green:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/zeroshift-green:latest ./green
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-proxy:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/zeroshift-proxy:latest ./proxy
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/blue:latest ./blue
+        docker build -t $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/green:latest ./green
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/proxy:latest ./proxy
       
     - name: Login to Container Registry
       uses: docker/login-action@v3
@@ -121,12 +121,12 @@ jobs:
     - name: Push Docker images
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-blue:$SHORT_SHA
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-blue:latest
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-green:$SHORT_SHA
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-green:latest
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-proxy:$SHORT_SHA
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-proxy:latest
+        docker push $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA
+        docker push $REGISTRY/$IMAGE_NAME/blue:latest
+        docker push $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA
+        docker push $REGISTRY/$IMAGE_NAME/green:latest
+        docker push $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA
+        docker push $REGISTRY/$IMAGE_NAME/proxy:latest
         
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -142,14 +142,14 @@ jobs:
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
           
           # Pull latest images
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-blue:$SHORT_SHA
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-green:$SHORT_SHA
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-proxy:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA
           
           # Update docker-compose.yml with new image tags
-          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-blue:$SHORT_SHA|g" docker-compose.yml
-          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-green:$SHORT_SHA|g" docker-compose.yml
-          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-proxy:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA|g" docker-compose.yml
           
           # Deploy green environment (staging)
           docker-compose up -d green
@@ -181,9 +181,9 @@ jobs:
     - name: Build Docker images
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-blue:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/zeroshift-blue:latest ./blue
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-green:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/zeroshift-green:latest ./green
-        docker build -t $REGISTRY/$IMAGE_NAME/zeroshift-proxy:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/zeroshift-proxy:latest ./proxy
+        docker build -t $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/blue:latest ./blue
+        docker build -t $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/green:latest ./green
+        docker build -t $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA -t $REGISTRY/$IMAGE_NAME/proxy:latest ./proxy
       
     - name: Login to Container Registry
       uses: docker/login-action@v3
@@ -195,12 +195,12 @@ jobs:
     - name: Push Docker images
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-blue:$SHORT_SHA
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-blue:latest
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-green:$SHORT_SHA
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-green:latest
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-proxy:$SHORT_SHA
-        docker push $REGISTRY/$IMAGE_NAME/zeroshift-proxy:latest
+        docker push $REGISTRY/$IMAGE_NAME/blue:$SHORT_SHA
+        docker push $REGISTRY/$IMAGE_NAME/blue:latest
+        docker push $REGISTRY/$IMAGE_NAME/green:$SHORT_SHA
+        docker push $REGISTRY/$IMAGE_NAME/green:latest
+        docker push $REGISTRY/$IMAGE_NAME/proxy:$SHORT_SHA
+        docker push $REGISTRY/$IMAGE_NAME/proxy:latest
         
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -216,14 +216,14 @@ jobs:
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
           
           # Pull latest images
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-blue:$SHORT_SHA
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-green:$SHORT_SHA
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-proxy:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA
           
           # Update docker-compose.yml with new image tags
-          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-blue:$SHORT_SHA|g" docker-compose.yml
-          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-green:$SHORT_SHA|g" docker-compose.yml
-          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/zeroshift-proxy:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*blue.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/blue:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*green.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/green:$SHORT_SHA|g" docker-compose.yml
+          sed -i "s|image:.*proxy.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/proxy:$SHORT_SHA|g" docker-compose.yml
           
           # Determine current live environment
           CURRENT_LIVE=$(cat live.txt)
