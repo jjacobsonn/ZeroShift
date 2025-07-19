@@ -2,7 +2,7 @@
 
 This guide provides step-by-step instructions for deploying and managing the ZeroShift blue-green deployment infrastructure.
 
-## 🚀 Quick Deployment
+## Quick Deployment
 
 ### 1. Local Development Setup
 
@@ -32,7 +32,7 @@ make docker-up
 make status
 ```
 
-## 🌐 Accessing the Application
+## Accessing the Application
 
 Once deployed, you can access the application at:
 
@@ -41,7 +41,7 @@ Once deployed, you can access the application at:
 - **Green Service**: http://localhost:8082
 - **Health Check**: http://localhost/health
 
-## 🔄 Blue-Green Switching
+## Blue-Green Switching
 
 ### Manual Switching
 
@@ -74,7 +74,7 @@ cd deploy
 ./switch.sh health
 ```
 
-## 🐳 Docker Management
+## Docker Management
 
 ### Service Management
 
@@ -109,7 +109,7 @@ docker exec -it zeroshift-green sh
 docker exec -it zeroshift-proxy sh
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Run Tests
 
@@ -140,7 +140,7 @@ curl -s http://localhost/ | jq
 curl -s http://localhost:8081/health | jq
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -172,7 +172,7 @@ Edit `proxy/nginx.conf` to modify:
 - SSL/TLS settings
 - Logging configuration
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -231,7 +231,7 @@ docker-compose -f deploy/docker-compose.yml up
 docker-compose -f deploy/docker-compose.yml logs -f --tail=100
 ```
 
-## 🔒 Security Considerations
+## Security Considerations
 
 ### Production Deployment
 
@@ -253,7 +253,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
   aquasec/trivy fs .
 ```
 
-## 📊 Monitoring
+## Monitoring
 
 ### Health Monitoring
 
@@ -273,7 +273,7 @@ Consider adding metrics collection:
 - Grafana for visualization
 - ELK stack for logging
 
-## 🔄 CI/CD Integration
+## CI/CD Integration
 
 ### GitHub Actions
 
@@ -300,7 +300,7 @@ make health
 make switch-green  # or make switch-blue
 ```
 
-## 📝 Logging
+## Logging
 
 ### View Logs
 
@@ -325,7 +325,7 @@ Logs are configured in:
 - Go services - Standard output logging
 - Docker Compose - Container logging
 
-## 🆘 Support
+## Support
 
 ### Getting Help
 

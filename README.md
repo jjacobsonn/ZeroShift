@@ -1,4 +1,4 @@
-# ZeroShift 🔄
+# ZeroShift
 
 **Zero-Downtime Blue-Green Deployment Infrastructure**
 
@@ -9,7 +9,7 @@ ZeroShift is a production-ready Go-based backend infrastructure that implements 
 [![Go](https://img.shields.io/badge/Go-1.21+-blue?style=for-the-badge&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -26,13 +26,13 @@ ZeroShift is a production-ready Go-based backend infrastructure that implements 
 
 ### Components
 
-- **🟦 Blue Service**: Production environment (currently live)
-- **🟩 Green Service**: Staging environment (for new deployments)
-- **🌐 Nginx Proxy**: Reverse proxy that routes traffic between environments
-- **🔄 Switch Script**: CLI tool to toggle between blue and green
-- **🚀 GitHub Actions**: Automated CI/CD pipeline
+- **Blue Service**: Production environment (currently live)
+- **Green Service**: Staging environment (for new deployments)
+- **Nginx Proxy**: Reverse proxy that routes traffic between environments
+- **Switch Script**: CLI tool to toggle between blue and green
+- **GitHub Actions**: Automated CI/CD pipeline
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -70,7 +70,7 @@ ZeroShift is a production-ready Go-based backend infrastructure that implements 
    curl http://localhost:8082/health  # Green
    ```
 
-## 🔄 Blue-Green Deployment
+## Blue-Green Deployment
 
 ### How It Works
 
@@ -101,7 +101,7 @@ ZeroShift is a production-ready Go-based backend infrastructure that implements 
 ### Example Output
 
 ```bash
-🔄 ZeroShift Blue-Green Deployment Status
+ZeroShift Blue-Green Deployment Status
 ==========================================
 Current Live Environment: blue
 
@@ -121,7 +121,7 @@ Main Endpoints:
   Proxy: http://localhost/
 ```
 
-## 🐳 Docker Setup
+## Docker Setup
 
 ### Services
 
@@ -154,7 +154,7 @@ services:
       green: { condition: service_healthy }
 ```
 
-## 🚀 CI/CD Pipeline
+## CI/CD Pipeline
 
 ### GitHub Actions Workflow
 
@@ -190,7 +190,7 @@ Configure these secrets in your GitHub repository:
 - `EC2_USERNAME`: SSH username
 - `EC2_SSH_KEY`: SSH private key
 
-## 🧪 Testing
+## Testing
 
 ### Run Tests
 
@@ -213,7 +213,7 @@ The project includes comprehensive tests for:
 - Content types
 - Error handling
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ZeroShift/
@@ -239,7 +239,7 @@ ZeroShift/
 └── README.md               # This file
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -270,7 +270,7 @@ location / {
 }
 ```
 
-## 🛡️ Security Features
+## Security Features
 
 - **Non-root containers**: All services run as non-root users
 - **Multi-stage builds**: Optimized Docker images
@@ -278,7 +278,7 @@ location / {
 - **Vulnerability scanning**: Automated security scanning
 - **Secrets management**: Secure credential handling
 
-## 📊 Monitoring
+## Monitoring
 
 ### Health Endpoints
 
@@ -298,7 +298,7 @@ location / {
 }
 ```
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -331,7 +331,7 @@ docker-compose logs -f green
 docker-compose logs -f proxy
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -347,11 +347,11 @@ docker-compose logs -f proxy
 - Ensure Docker builds work
 - Test the switch functionality
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by modern DevOps practices
 - Built with Go, Docker, and Nginx
@@ -360,4 +360,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**ZeroShift** - Zero downtime, maximum reliability 🚀 
+**ZeroShift** - Zero downtime, maximum reliability 
